@@ -1,0 +1,26 @@
+# Data — large and publicly re-derivable; never commit
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# R
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+renv/library/
+renv/local/
+renv/cellar/
+renv/staging/
+
+# Model artifacts
+models/*.rds
+!models/.gitkeep
+
+# Secrets
+.Renviron
+*.token
+
+# OS
+.DS_Store
