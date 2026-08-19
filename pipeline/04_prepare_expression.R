@@ -117,3 +117,9 @@ dim(vst_train_filtered)
 saveRDS(vst_mat, here("data", "processed", "vst_mat.rds"))
 saveRDS(top_genes, here("data", "processed", "top_genes.rds"))
 saveRDS(vst_train_filtered, here("data", "processed", "vst_train_filtered.rds"))
+
+# Elastic-net combines lasso and ridge regression. It has a lambda parameter that can give large
+# coefficients (overfit) or small coeffs (worse model possibly).
+# You need to compare lambdas and also do cross validation.
+# Inner loop's job: pick a lambda
+# Outer loop's job: score the result
