@@ -180,7 +180,58 @@ development.
 
 ## App
 
-*A Shiny app serving the final model will be linked here once deployed.*
+## App
+
+An interactive Shiny app lets a user enter a hypothetical patient's
+molecular subtype, histologic grade, and age, and view a model-predicted
+survival curve for that profile — the same three-variable Cox model
+(`final_fit`) evaluated in the final test-set analysis above.
+
+**What it shows.** Two curves are plotted together:
+
+- **Predicted (red)** — the Cox model's survival estimate for the entered
+  patient profile, computed via `survfit(final_fit, newdata = patient)`.
+- **Training cohort reference (grey)** — an empirical Kaplan-Meier curve
+  built from real training patients matching the entered subtype *and*
+  grade, labeled with its actual sample size and event count (e.g.,
+  "n=42, 8 events"). A warning is shown when this reference group is small
+  (n < 20), since a thin reference group means the prediction sits in a
+  region with limited real-world support.
+
+**How the predicted curve is generated, and why the reference count
+matters.** The predicted (red) curve is a parametric prediction, not an
+empirical one — it has no sample size of its own. Its timepoints are fixed
+by the training set's ~97 unique event days regardless of the patient
+profile entered; what varies between different inputs is only the curve's
+height at each of those fixed points, driven by that profile's hazard
+ratios. Critically, **the model will produce a fully-formed, confident-
+looking curve for any input, including subtype/grade/age combinations that
+are rare or entirely absent from the training data** — nothing about the
+predicted curve's appearance distinguishes interpolation (a well-supported
+prediction) from extrapolation (a prediction with little or no real
+evidence behind it). The grey reference curve's sample size is the only
+signal in the app that speaks to this, which is why it's shown explicitly
+rather than only as a background KM line, and why predictions should always
+be read alongside it rather than in isolation.
+
+**Validation context.** The app permanently displays the model's training
+(0.817) and test-set (0.902) concordance, so this context is visible every
+time the tool is used, not only to someone who separately reads this
+README.
+
+**This is a research demonstration, not a validated clinical tool.** It has
+not undergone the analytical or clinical validation (see earlier discussion
+of CLSI/FDA validation frameworks) that would be required before informing
+any real clinical decision, and predictions for rare covariate
+combinations should be treated with particular skepticism given the
+extrapolation issue described above.
+
+*Live app: [https://alex-hannah.shinyapps.io/lgg-survival-risk/](https://alex-hannah.shinyapps.io/lgg-survival-risk/)*
+
+**Running locally:**
+```r
+shiny::runApp("app")
+```
 
 ## Reproducing this
 
