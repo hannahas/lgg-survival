@@ -228,10 +228,43 @@ extrapolation issue described above.
 
 *Live app: [https://alex-hannah.shinyapps.io/lgg-survival-risk/](https://alex-hannah.shinyapps.io/lgg-survival-risk/)*
 
-**Running locally:**
-```r
-shiny::runApp("app")
+**Run locally via Docker:**
+```bash
+git clone <repo>
+docker build -t lgg-survival-app .
+docker run -p 3838:3838 lgg-survival-app
 ```
+Then visit `http://localhost:3838`.
+
+## Running via Docker
+
+For full environment reproducibility (R version, package versions, and
+system-level dependencies all pinned), the Shiny app can be run in a
+Docker container.
+
+**Pull the published image:**
+```bash
+docker pull ahannah95/lgg-survival-app
+docker run -p 3838:3838 ahannah95/lgg-survival-app
+```
+Then visit `http://localhost:3838`.
+
+**Or build from source:**
+```bash
+git clone <repo-url>
+cd lgg-survival
+docker build -t lgg-survival-app .
+docker run -p 3838:3838 lgg-survival-app
+```
+
+This image was tested with a full build-cache wipe (`docker system prune -a`
+followed by a clean rebuild) and by pulling and running it fresh from Docker
+Hub after removing all local copies — confirming the container runs
+correctly independent of any local build artifacts.
+
+Note: the image is built with `--platform=linux/amd64`. On Apple Silicon
+(arm64) machines, Docker runs it via emulation, which is slower to build
+and start than a native image but functions correctly.
 
 ## Reproducing this
 
