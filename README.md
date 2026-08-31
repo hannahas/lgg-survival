@@ -45,11 +45,24 @@ model development.
 
 **Survival analysis.** Kaplan-Meier curves and log-rank tests compared
 overall survival across histologic grade (G2/G3) and molecular subtype.
+
+A Cox model compares the "risk of event per time unit", or hazard function. 
+For example, a treatment might half a subject's hazard at any given time. 
+If the hazard ratio is 0.17 for covariate X, then that group's instantaneous 
+risk fo death is 17% of what it is for the reference group, an 83% reduction. 
+
+Concordance risk (C-index) is the performance metric. Take a random pair of 
+patients where you know who died first, and ask how often the model correctly 
+says that this one was the higher risk. It's AUC's counterpart for survival 
+data. 
+
 Cox proportional hazards models quantified effect sizes as hazard ratios
 with 95% CIs; discrimination was assessed via Harrell's concordance index.
 The proportional hazards assumption was tested via Schoenfeld residuals
 (`cox.zph`). All modeling in this section was performed on the training
-set only.
+set only. The assumption is that the ratio of hazards between any two 
+groups stays constant across the entire follow up period, even as the 
+absolute hazard falls over time. 
 
 ## Results — Hypothesis 1: Molecular subtype vs. histologic grade
 
@@ -61,6 +74,12 @@ overall survival far more sharply than histologic grade.
 | Histologic grade (G2/G3) | 0.653 | 0.025 |
 | Molecular subtype (IDH/codel) | 0.741 | 0.032 |
 | Subtype + grade + age | 0.817 | 0.023 |
+
+Log-rank test: Null hypothesis is that the survival curves are idential among 
+the various groups compared. Bigger chi2 = bigger gap between observed and 
+expected event counts. No hazard ratio comes out of this. The hazard ratio 
+measures how big the difference between groups is. The Chi2 measures how 
+confidently the data rules out the 'no difference' null.
 
 Log-rank test for molecular subtype: χ² = 106, df = 2, p < 2×10⁻¹⁶.
 Log-rank test for grade: χ² = 27.9, df = 1, p = 1×10⁻⁷.
@@ -74,10 +93,15 @@ Cox model:
 | IDH-mutant, codeleted | 0.107 | (0.059, 0.193) | 16 / 132 |
 | IDH-wildtype (reference) | 1.00 | — | 40 / 75 |
 
+Hazard ratio is more informative than mortality percentages, but ...
 IDH-wildtype tumors — despite being histologically graded as low-grade
 (WHO grade II/III) — showed survival behavior consistent with glioblastoma:
 53% mortality in this cohort vs. 21% (non-codel) and 13% (codel) in the
 IDH-mutant groups.
+
+LGG is tumors histologically graded II or III, not IV. 
+IDH-wildtype tumors, despite being low grade, are dying similarly to 
+glioblastoma itself. 
 
 ![Kaplan-Meier by molecular subtype](reports/figures/km_idh_subtype.png)
 
@@ -85,11 +109,11 @@ IDH-mutant groups.
 The jump from subtype alone (0.741) to the combined model (0.817) is nearly
 as large as the jump from grade alone to subtype alone, indicating grade
 retains independent prognostic value even after accounting for molecular
-status — mirroring current WHO practice of integrated diagnosis.
+status — mirroring current WHO practice of integrated diagnosis
 
 **Proportional hazards.** The PH assumption was violated for IDH/codel
 status (χ² = 14.9, df = 2, p = 6×10⁻⁴), and for all covariates in the
-combined model (global p = 0.002). Schoenfeld residuals show the survival
+combined model (global p = 0.002). Schoenfeld residuals from cox.zph() show the survival
 difference between IDH-wildtype and IDH-mutant groups is most pronounced in
 the first ~2 years and attenuates thereafter — consistent with
 IDH-wildtype's rapid early mortality: by day 2000, only 1 of 75
@@ -213,6 +237,16 @@ evidence behind it). The grey reference curve's sample size is the only
 signal in the app that speaks to this, which is why it's shown explicitly
 rather than only as a background KM line, and why predictions should always
 be read alongside it rather than in isolation.
+
+The gray curve comes from the training data. It changes based on molecular 
+subtype and codel status, but not based on age.
+
+The red curve is a model output. The inputs are age, molecular subtype 
+(codeletion status), and grade. final_fit is the trained Cox model, and it 
+has coefficients for each of these 3 variables. The prediction curve for the 
+new patient takes the baseline curve from the training cohort using all 97 of 
+the death days, and it raises that curve to the power of the patient's hazard 
+ratio at every time point. 
 
 **Validation context.** The app permanently displays the model's training
 (0.817) and test-set (0.902) concordance, so this context is visible every

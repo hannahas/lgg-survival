@@ -1,6 +1,5 @@
 library(shiny)
 library(survival)
-library(survminer)
 library(ggplot2)
 
 # Load the trained model and reference cohort

@@ -44,3 +44,5 @@ round(prop.table(table(test$idh_codel, test$os_event), 1), 3)
 # 95% CI for each
 c(0.902 - 1.96*0.0232, 0.902 + 1.96*0.0232)   # test
 c(0.817 - 1.96*0.0226, 0.817 + 1.96*0.0226)   # train
+
+saveRDS(final_fit, here("models", "final_cox_model.rds"))

@@ -24,3 +24,7 @@ models/*.rds
 
 # OS
 .DS_Store
+
+# Deployment artifacts — intentionally committed for the Shiny app to serve
+!app/model/final_cox_model.rds
+!app/model/cohort.rds
