@@ -1,3 +1,9 @@
+# Does molecular subtype separate survival? Yes.
+# Does histologic grade separate survival? Yes, but less separation than molecular subtype.
+# Is subtype redundant with grade, or does it add to it
+# It adds. 
+# Grade alone = 0.65, subtype alone = 0.74, both = 0.82
+
 library(survival)
 library(survminer)
 library(here)
